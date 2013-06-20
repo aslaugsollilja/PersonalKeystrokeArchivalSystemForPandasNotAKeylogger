@@ -1,0 +1,18 @@
+{
+    "manifest_version": 2,
+
+    "name": "pesto",
+    "description": "A Chromium extension that sends all keystrokes to an online service, where they are logged and can later be accessed by the user.",
+    "version": "1.0",
+
+    "permissions": [
+        "<all_urls>", "storage"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["jquery.js", "pesto.js"]
+        }
+    ],
+    "options_page": "options.html"
+}
