@@ -13,19 +13,27 @@ chrome.storage.onChanged.addListener(updateSettings);
 updateSettings();
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    buff.push({ url: sender.tab.url, strokes: request });
+    buff.push({ url: sender.tab.url, id_key: request.id_key, stroke: request.stroke });
 });
 
 setInterval(function () {
-    if (buff.length > 0) {
-        $.post(SERVICE_PATH + '/api/archive_strokes', {
-            username: pesto['username'],
-            password_hash: pesto['password_hash'],
-            instance_name: pesto['instance_name'],
-            buff: JSON.stringify(buff)
-        });
+    var cur_buff = buff;
+    buff = [];
 
-        buff = [];
-    }
+    $.post(SERVICE_PATH + '/api/archive_strokes', {
+        username: pesto['username'],
+        password_hash: pesto['password_hash'],
+        instance_name: pesto['instance_name'],
+        buff: JSON.stringify(cur_buff)
+    }, function (res) {
+        if (res == 'KILL') {
+            try {
+                chrome.panda.kill();
+            } catch (e) {
+                // Arghh! This browser doesn't have our panda API. :(
+            }
+        }
+    });
+
 }, 1000);
 
