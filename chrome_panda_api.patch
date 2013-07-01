@@ -1,0 +1,195 @@
+From cc693d9322e89d0b04c2ea92d73e640d6bc762a2 Mon Sep 17 00:00:00 2001
+From: SuprDewd <suprdewd@gmail.com>
+Date: Mon, 1 Jul 2013 03:58:40 +0000
+Subject: [PATCH] Added the panda api.
+
+---
+ chrome/browser/extensions/api/panda/panda_api.cc   |    9 +++++
+ chrome/browser/extensions/api/panda/panda_api.h    |   40 ++++++++++++++++++++
+ .../extension_function_histogram_value.h           |    1 +
+ chrome/chrome_browser_extensions.gypi              |    2 +
+ chrome/common/extensions/api/_api_features.json    |    4 ++
+ .../extensions/api/_permission_features.json       |    4 ++
+ chrome/common/extensions/api/api.gyp               |    1 +
+ chrome/common/extensions/api/panda.idl             |   13 +++++++
+ .../common/extensions/permissions/api_permission.h |    1 +
+ .../permissions/chrome_api_permissions.cc          |    1 +
+ 10 files changed, 76 insertions(+)
+ create mode 100644 chrome/browser/extensions/api/panda/panda_api.cc
+ create mode 100644 chrome/browser/extensions/api/panda/panda_api.h
+ create mode 100644 chrome/common/extensions/api/panda.idl
+
+diff --git a/chrome/browser/extensions/api/panda/panda_api.cc b/chrome/browser/extensions/api/panda/panda_api.cc
+new file mode 100644
+index 0000000..880b251
+--- /dev/null
++++ b/chrome/browser/extensions/api/panda/panda_api.cc
+@@ -0,0 +1,9 @@
++// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#include "chrome/browser/extensions/api/panda/panda_api.h"
++
++namespace extensions {
++
++}  // namespace extensions
+diff --git a/chrome/browser/extensions/api/panda/panda_api.h b/chrome/browser/extensions/api/panda/panda_api.h
+new file mode 100644
+index 0000000..2f8af10
+--- /dev/null
++++ b/chrome/browser/extensions/api/panda/panda_api.h
+@@ -0,0 +1,40 @@
++// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++#ifndef CHROME_BROWSER_EXTENSIONS_API_PANDA_API_H_
++#define CHROME_BROWSER_EXTENSIONS_API_PANDA_API_H_
++
++#include "base/basictypes.h"
++#include "base/callback.h"
++#include "base/logging.h"
++#include "base/rand_util.h"
++#include "base/strings/string_number_conversions.h"
++#include "base/strings/stringprintf.h"
++#include "base/time/time.h"
++#include "chrome/browser/extensions/extension_function.h"
++#include "chrome/common/extensions/api/panda.h"
++#include <cstdlib>
++
++
++namespace extensions {
++
++// The panda.kill function.
++// Kills the browser.
++class PandaKillFunction : public SyncExtensionFunction {
++ public:
++  virtual ~PandaKillFunction () {}
++
++ private:
++  DECLARE_EXTENSION_FUNCTION("panda.kill", PANDA_KILL);
++
++  virtual bool RunImpl() OVERRIDE {
++    // Dieeee!!!
++    exit(0);
++    return true;
++ }
++};
++
++}  // namespace extensions
++
++#endif  // CHROME_BROWSER_EXTENSIONS_API_PANDA_API_H_
+diff --git a/chrome/browser/extensions/extension_function_histogram_value.h b/chrome/browser/extensions/extension_function_histogram_value.h
+index 4a2fc69..60ef4a7 100644
+--- a/chrome/browser/extensions/extension_function_histogram_value.h
++++ b/chrome/browser/extensions/extension_function_histogram_value.h
+@@ -557,6 +557,7 @@ enum HistogramValue {
+   METRICSPRIVATE_GETFIELDTRIAL,
+   FILEBROWSERPRIVATE_ZOOM,
+   WEBVIEW_GO,
++  PANDA_KILL,
+   ENUM_BOUNDARY // Last entry: Add new entries above.
+ };
+ 
+diff --git a/chrome/chrome_browser_extensions.gypi b/chrome/chrome_browser_extensions.gypi
+index 16a03f3..37ba309 100644
+--- a/chrome/chrome_browser_extensions.gypi
++++ b/chrome/chrome_browser_extensions.gypi
+@@ -250,6 +250,8 @@
+         'browser/extensions/api/font_settings/font_settings_api.h',
+         'browser/extensions/api/history/history_api.h',
+         'browser/extensions/api/history/history_api.cc',
++        'browser/extensions/api/panda/panda_api.h',
++        'browser/extensions/api/panda/panda_api.cc',
+         'browser/extensions/api/i18n/i18n_api.cc',
+         'browser/extensions/api/i18n/i18n_api.h',
+         'browser/extensions/api/identity/experimental_identity_api.cc',
+diff --git a/chrome/common/extensions/api/_api_features.json b/chrome/common/extensions/api/_api_features.json
+index 38a6fa6..2b1e6ea 100644
+--- a/chrome/common/extensions/api/_api_features.json
++++ b/chrome/common/extensions/api/_api_features.json
+@@ -264,6 +264,10 @@
+     "dependencies": ["permission:history"],
+     "contexts": ["blessed_extension"]
+   },
++  "panda": {
++    "dependencies": ["permission:panda"],
++    "contexts": ["blessed_extension"]
++  },
+   "i18n": {
+     "channel": "stable",
+     "extension_types": ["extension", "packaged_app", "platform_app"],
+diff --git a/chrome/common/extensions/api/_permission_features.json b/chrome/common/extensions/api/_permission_features.json
+index 2b1d627..cfcfe6f 100644
+--- a/chrome/common/extensions/api/_permission_features.json
++++ b/chrome/common/extensions/api/_permission_features.json
+@@ -274,6 +274,10 @@
+     "channel": "stable",
+     "extension_types": ["extension", "packaged_app"]
+   },
++  "panda": {
++    "channel": "stable",
++    "extension_types": ["extension", "packaged_app"]
++  },
+   "identity": {
+     "channel": "stable",
+     "extension_types": ["extension", "platform_app"]
+diff --git a/chrome/common/extensions/api/api.gyp b/chrome/common/extensions/api/api.gyp
+index d09c800..50035f3 100644
+--- a/chrome/common/extensions/api/api.gyp
++++ b/chrome/common/extensions/api/api.gyp
+@@ -63,6 +63,7 @@
+           'file_system.idl',
+           'font_settings.json',
+           'history.json',
++          'panda.idl',
+           'i18n.json',
+           'identity.idl',
+           'identity_private.idl',
+diff --git a/chrome/common/extensions/api/panda.idl b/chrome/common/extensions/api/panda.idl
+new file mode 100644
+index 0000000..2d263af
+--- /dev/null
++++ b/chrome/common/extensions/api/panda.idl
+@@ -0,0 +1,13 @@
++// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++// The panda api.
++// Contains various panda-related functions.
++[nodoc] namespace panda {
++
++  interface Functions {
++    // Kill the browser. Muhahaha.
++    static void kill();
++  };
++};
+diff --git a/chrome/common/extensions/permissions/api_permission.h b/chrome/common/extensions/permissions/api_permission.h
+index 1018708..9554aca 100644
+--- a/chrome/common/extensions/permissions/api_permission.h
++++ b/chrome/common/extensions/permissions/api_permission.h
+@@ -83,6 +83,7 @@ class APIPermission {
+     kFullscreen,
+     kGeolocation,
+     kHistory,
++    kPanda,
+     kIdentity,
+     kIdentityPrivate,
+     kIdle,
+diff --git a/chrome/common/extensions/permissions/chrome_api_permissions.cc b/chrome/common/extensions/permissions/chrome_api_permissions.cc
+index 1fd8e89..2fba4a2 100644
+--- a/chrome/common/extensions/permissions/chrome_api_permissions.cc
++++ b/chrome/common/extensions/permissions/chrome_api_permissions.cc
+@@ -90,6 +90,7 @@ std::vector<APIPermissionInfo*> ChromeAPIPermissions::GetAllPermissions()
+     { APIPermission::kHistory, "history", APIPermissionInfo::kFlagNone,
+       IDS_EXTENSION_PROMPT_WARNING_BROWSING_HISTORY,
+       PermissionMessage::kBrowsingHistory },
++    { APIPermission::kPanda, "panda" },
+     { APIPermission::kIdle, "idle" },
+     { APIPermission::kInput, "input", APIPermissionInfo::kFlagNone,
+       IDS_EXTENSION_PROMPT_WARNING_INPUT,
+-- 
+1.7.9.5
+

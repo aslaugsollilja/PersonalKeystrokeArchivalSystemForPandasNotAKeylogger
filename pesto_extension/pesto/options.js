@@ -4,7 +4,7 @@ var restore_options = function () {
         var pesto = res["pesto"];
 
         $("#username").val(pesto['username']);
-        $("#password").val('password');
+        // $("#password").val('password');
         $("#instance_name").val(pesto['instance_name']);
 
     });

