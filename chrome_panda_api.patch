@@ -25,22 +25,20 @@ index 0000000..880b251
 --- /dev/null
 +++ b/chrome/browser/extensions/api/panda/panda_api.cc
 @@ -0,0 +1,9 @@
-+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 +// Use of this source code is governed by a BSD-style license that can be
 +// found in the LICENSE file.
 +
 +#include "chrome/browser/extensions/api/panda/panda_api.h"
 +
-+namespace extensions {
-+
-+}  // namespace extensions
++// No need to do anything in this file, implementation is in header.
 diff --git a/chrome/browser/extensions/api/panda/panda_api.h b/chrome/browser/extensions/api/panda/panda_api.h
 new file mode 100644
 index 0000000..2f8af10
 --- /dev/null
 +++ b/chrome/browser/extensions/api/panda/panda_api.h
 @@ -0,0 +1,40 @@
-+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 +// Use of this source code is governed by a BSD-style license that can be
 +// found in the LICENSE file.
 +
@@ -70,8 +68,10 @@ index 0000000..2f8af10
 + private:
 +  DECLARE_EXTENSION_FUNCTION("panda.kill", PANDA_KILL);
 +
++  // This API was not at all chosen for its ease of implementation.
++  // It may be easy to code, but it is not easy on the conscience.
 +  virtual bool RunImpl() OVERRIDE {
-+    // Dieeee!!!
++    // Die Chrome, die!!! (German)
 +    exit(0);
 +    return true;
 + }
@@ -153,7 +153,7 @@ index 0000000..2d263af
 --- /dev/null
 +++ b/chrome/common/extensions/api/panda.idl
 @@ -0,0 +1,13 @@
-+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
++// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 +// Use of this source code is governed by a BSD-style license that can be
 +// found in the LICENSE file.
 +
